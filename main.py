@@ -175,8 +175,8 @@ time_spend_company
     content = st.container()
 
     with st.sidebar:
-        st.title((":green[Forecasting] Employee Attrition Rate
-        by- Nisarg Rathod"))
+        st.title(":green[Forecasting] Employee Attrition Rate
+        by- Nisarg Rathod")
         st.image("imgs/division.png", caption="", width=90)
         page = option_menu(
             menu_title=None,
