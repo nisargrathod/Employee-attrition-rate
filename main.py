@@ -253,7 +253,7 @@ time_spend_company
         # Prediction Model
         if page == "Prediction":
             with header:
-                st.header("🏦 Prediction Model 👨‍💼🔥")
+                st.header("🏦 Prediction Model 👨‍💼")
                 prediction_option = option_menu(menu_title=None, options=["One Value", 'From File'],
                                                 icons=[" "]*2, menu_icon="cast", default_index=0,
                                                 orientation="horizontal", styles=sub_options_style)
