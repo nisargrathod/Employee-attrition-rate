@@ -232,7 +232,7 @@ time_spend_company
         # Vizualizations
         if page == "Vizualizations":
             with header:
-                st.header("Data Vizualizations 📉🚀")
+                st.header("Data Vizualizations 📉")
 
             with content:
                 # Numerical Columns
