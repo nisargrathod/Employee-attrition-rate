@@ -210,7 +210,7 @@ time_spend_company
 
                 st.write("***")
 
-                st.subheader("Data Summary Overview 🧐")
+                st.subheader("Data Summary Overview")
 
                 len_numerical_data = df.select_dtypes(
                     include="number").shape[1]
