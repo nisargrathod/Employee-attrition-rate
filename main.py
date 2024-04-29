@@ -254,12 +254,12 @@ time_spend_company
         if page == "Prediction":
             with header:
                 st.header("🏦 Prediction Model 👨‍💼")
-                prediction_option = option_menu(menu_title=None, options=["One Value"], #'From File'
+                prediction_option = option_menu(menu_title=None, options=["Predict Employee Expected To STAY/LEAVE"], #'From File' #"One Value
                                                 icons=[" "], menu_icon="cast", default_index=0,
                                                 orientation="horizontal", styles=sub_options_style)
 
             with content:
-                if prediction_option == "One Value":
+                if prediction_option == " "Predict Employee Expected To STAY/LEAVE": #"One Value":
                     with st.form("Predict_value"):
                         c1, c2 = st.columns(2)
                         with c1:
