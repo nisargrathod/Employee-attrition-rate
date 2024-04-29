@@ -332,99 +332,99 @@ time_spend_company
                                     st.subheader("Probability To Leave")
                                     st.subheader(f"{prediction_prop[0, 1]}%")
 
-                if prediction_option == "From File":
-                    st.info("Please upload your file with the following columns' names in the same order\n\
-                            ['satisfaction_level', 'last_evaluation', 'average_montly_hours', 'time_spend_company', 'salary']", icon="ℹ️")
+                # if prediction_option == "From File":
+                #     st.info("Please upload your file with the following columns' names in the same order\n\
+                #             ['satisfaction_level', 'last_evaluation', 'average_montly_hours', 'time_spend_company', 'salary']", icon="ℹ️")
 
-                    test_file = st.file_uploader(
-                        "Upload Your Test File 📂", type="csv")
+                #     test_file = st.file_uploader(
+                #         "Upload Your Test File 📂", type="csv")
 
-                    if test_file is not None:
-                        extention = test_file.name.split(".")[-1]
-                        if extention.lower() != "csv":
-                            st.error("Please, Upload CSV FILE ONLY")
+                #     if test_file is not None:
+                #         extention = test_file.name.split(".")[-1]
+                #         if extention.lower() != "csv":
+                #             st.error("Please, Upload CSV FILE ONLY")
 
-                        else:
-                            X_test = pd.read_csv(test_file)
-                            X_test.dropna(inplace=True)
+                #         else:
+                #             X_test = pd.read_csv(test_file)
+                #             X_test.dropna(inplace=True)
 
-                            if not validate_test_file(X_test.columns.to_list()):
-                                X_test = X_test[['satisfaction_level', 'last_evaluation',
-                                                 'average_montly_hours', 'time_spend_company', 'salary']]
+                #             if not validate_test_file(X_test.columns.to_list()):
+                #                 X_test = X_test[['satisfaction_level', 'last_evaluation',
+                #                                  'average_montly_hours', 'time_spend_company', 'salary']]
 
-                            X_encodded = pd.get_dummies(
-                                X_test, columns=['salary'], drop_first=True) * 1
+                #             X_encodded = pd.get_dummies(
+                #                 X_test, columns=['salary'], drop_first=True) * 1
 
-                            all_predicted_values = model.predict(X_encodded)
+                #             all_predicted_values = model.predict(X_encodded)
 
-                            final_complete_file = pd.concat([X_test, pd.DataFrame(all_predicted_values,
-                                                                                  columns=["Left"])], axis=1)
+                #             final_complete_file = pd.concat([X_test, pd.DataFrame(all_predicted_values,
+                #                                                                   columns=["Left"])], axis=1)
 
-                            final_complete_file["Left"] = final_complete_file["Left"].map(
-                                {0: "Stay", 1: "Left"})
+                #             final_complete_file["Left"] = final_complete_file["Left"].map(
+                #                 {0: "Stay", 1: "Left"})
 
-                            st.write("")
+                #             st.write("")
 
-                            st.dataframe(final_complete_file.head(200),
-                                         use_container_width=True)
-                    else:
-                        st.warning(
-                            "Please, Upload The CSV Test File", icon="⚠️")
+                #             st.dataframe(final_complete_file.head(200),
+                #                          use_container_width=True)
+                #     else:
+                #         st.warning(
+                #             "Please, Upload The CSV Test File", icon="⚠️")
 
-                    with st.form("comaprison_form"):
+                #     with st.form("comaprison_form"):
 
-                        if st.form_submit_button("Compare Predicted With Actual Values"):
-                            st.info(
-                                "Be Sure Your Actual Values File HAS ONLY One Column", icon="ℹ️")
+                #         if st.form_submit_button("Compare Predicted With Actual Values"):
+                #             st.info(
+                #                 "Be Sure Your Actual Values File HAS ONLY One Column", icon="ℹ️")
 
-                            actual_file = st.file_uploader(
-                                "Upload Your Actual Data File 📂", type="csv")
+                #             actual_file = st.file_uploader(
+                #                 "Upload Your Actual Data File 📂", type="csv")
 
-                            if actual_file is not None and test_file is not None:
-                                if actual_file.name.split(".")[-1].lower() != "csv":
-                                    st.error("Please, Upload CSV FILE ONLY")
+                #             if actual_file is not None and test_file is not None:
+                #                 if actual_file.name.split(".")[-1].lower() != "csv":
+                #                     st.error("Please, Upload CSV FILE ONLY")
 
-                                else:
-                                    y_test = pd.read_csv(actual_file)
+                #                 else:
+                #                     y_test = pd.read_csv(actual_file)
 
-                                if y_test.shape[1] == 1:
-                                    with st.spinner("Comparing Results...."):
-                                        sleep(2)
+                #                 if y_test.shape[1] == 1:
+                #                     with st.spinner("Comparing Results...."):
+                #                         sleep(2)
 
-                                        col1, col2 = st.columns(2)
+                #                         col1, col2 = st.columns(2)
 
-                                        with col1:
-                                            test_score = np.round(
-                                                accuracy_score(y_test, all_predicted_values) * 100, 2)
-                                            prediction.creat_matrix_score_cards("imgs/accuracy.png",
-                                                                                "Prediction Accuracy",
-                                                                                test_score,
-                                                                                True
-                                                                                )
+                #                         with col1:
+                #                             test_score = np.round(
+                #                                 accuracy_score(y_test, all_predicted_values) * 100, 2)
+                #                             prediction.creat_matrix_score_cards("imgs/accuracy.png",
+                #                                                                 "Prediction Accuracy",
+                #                                                                 test_score,
+                #                                                                 True
+                #                                                                 )
 
-                                        with col2:
+                #                         with col2:
 
-                                            mse = mean_squared_error(
-                                                y_test, all_predicted_values)
-                                            prediction.creat_matrix_score_cards("imgs/sort.png",
-                                                                                "Error Ratio",
-                                                                                np.round(
-                                                                                    np.sqrt(mse), 2),
-                                                                                False)
+                #                             mse = mean_squared_error(
+                #                                 y_test, all_predicted_values)
+                #                             prediction.creat_matrix_score_cards("imgs/sort.png",
+                #                                                                 "Error Ratio",
+                #                                                                 np.round(
+                #                                                                     np.sqrt(mse), 2),
+                #                                                                 False)
 
-                                        cm = confusion_matrix(
-                                            y_test, all_predicted_values)
+                #                         cm = confusion_matrix(
+                #                             y_test, all_predicted_values)
 
-                                        st.plotly_chart(prediction.create_confusion_plot(cm),
-                                                        use_container_width=True)
+                #                         st.plotly_chart(prediction.create_confusion_plot(cm),
+                #                                         use_container_width=True)
 
-                                else:
-                                    st.warning(
-                                        "Please, Check That Your Test File Has The One Column.", icon="⚠️")
+                #                 else:
+                #                     st.warning(
+                #                         "Please, Check That Your Test File Has The One Column.", icon="⚠️")
 
-                            else:
-                                st.warning(
-                                    "Please, Check That You Upload The Test File & Actual Value", icon="⚠️")
+                #             else:
+                #                 st.warning(
+                #                     "Please, Check That You Upload The Test File & Actual Value", icon="⚠️")
 
 
 run()
