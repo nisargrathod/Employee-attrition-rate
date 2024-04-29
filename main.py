@@ -259,7 +259,7 @@ time_spend_company
                                                 orientation="horizontal", styles=sub_options_style)
 
             with content:
-                if prediction_option == " "Predict Employee Expected To STAY/LEAVE": #"One Value":
+                if prediction_option == " "Predict Employee Expected To STAY/LEAVE": #"One Value"
                     with st.form("Predict_value"):
                         c1, c2 = st.columns(2)
                         with c1:
