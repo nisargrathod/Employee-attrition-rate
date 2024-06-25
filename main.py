@@ -197,7 +197,7 @@ time_spend_company
                     st.table(data_stats)
 
         # Visualizations
-        if page == "Visualizations":
+        if page == "visualizations":
             with header:
                 st.header("Data Visualizations 📉")
 
