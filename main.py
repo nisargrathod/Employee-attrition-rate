@@ -1,6 +1,6 @@
 # Importing ToolKits
 import re
-import visualizations
+import vizualizations
 import prediction
 
 from time import sleep
@@ -197,7 +197,7 @@ time_spend_company
                     st.table(data_stats)
 
         # Visualizations
-        if page == "visualizations":
+        if page == "vizualizations":
             with header:
                 st.header("Data Visualizations 📉")
 
