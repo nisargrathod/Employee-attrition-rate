@@ -45,7 +45,7 @@ def run():
     def load_the_model(model_path):
         return pd.read_pickle(model_path)
         
-    df = load_data("[Dataset]_Module11_Test_(Employee).csv")
+    df = load_data("HR_comma_sep.csv")
 
     model = load_the_model("Employee Attrition Rate(Nisarg).pkl")
 
