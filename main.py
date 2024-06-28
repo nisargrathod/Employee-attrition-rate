@@ -47,7 +47,7 @@ def run():
         
     df = load_data("[Dataset]_Module11_Test_(Employee).csv")
 
-    model = load_the_model("linear_regression_model.pkl")
+    model = load_the_model("Employee Attrition Rate(Nisarg).pkl")
 
     # Function To Valid Input Data
     @st.cache_data
