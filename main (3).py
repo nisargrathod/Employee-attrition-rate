@@ -47,7 +47,7 @@ def run():
         
     df = load_data("HR_comma_sep.csv")
 
-    model = load_the_model("random_forest_employee_retention_v1.pkl")
+    model = load_the_model("Employee Attrition Rate(Nisarg).pkl")
 
     # Function To Valid Input Data
     @st.cache_data
