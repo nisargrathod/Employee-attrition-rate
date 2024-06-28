@@ -1,6 +1,6 @@
 # Importing ToolKits
 import re
-import vizualizations
+import vizualization
 import prediction
 
 from time import sleep
