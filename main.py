@@ -1,21 +1,14 @@
 # Importing ToolKits
 import re
-import vizualization
-import prediction
-
-from time import sleep
 import pandas as pd
 import numpy as np
-import plotly.express as px
-
+import streamlit as st
+from time import sleep
 from sklearn.metrics import mean_squared_error, accuracy_score, confusion_matrix
 
-
-import streamlit as st
-from streamlit.components.v1 import html
-from streamlit_option_menu import option_menu
-import warnings
-
+# Importing local modules (assuming they are defined in vizualization.py and prediction.py)
+import vizualization
+import prediction
 
 def run():
     st.set_page_config(
@@ -24,115 +17,107 @@ def run():
         layout="wide"
     )
 
+    # Suppress FutureWarnings
+    import warnings
     warnings.simplefilter(action='ignore', category=FutureWarning)
 
-    # Function To Load Our Dataset
-    @st.cache_data
+    # Function to load data
+    @st.cache(allow_output_mutation=True)
     def load_data(the_file_path):
-        df = pd.read_csv(the_file_path)
-        df.columns = df.columns.str.replace(" ",  "_").str.replace(".", "")
+        try:
+            df = pd.read_csv(the_file_path)
+            df.columns = df.columns.str.replace(" ", "_").str.replace(".", "")
+            df.drop_duplicates(inplace=True)
+            df.reset_index(drop=True, inplace=True)
+            return df
+        except FileNotFoundError:
+            st.error(f"Error: Data file '{the_file_path}' not found.")
+        except Exception as e:
+            st.error(f"Error: Failed to load data - {e}")
+            return None
 
-        # Drop Duplicates Records
-        df.drop_duplicates(inplace=True)
-
-        # Reset Our Index to be Orderd
-        df.reset_index(inplace=True, drop=True)
-
-        return df
-
-    # Function To Load Our Dataset
-    @st.cache_data
+    # Function to load the model
+    @st.cache(allow_output_mutation=True)
     def load_the_model(model_path):
-        return pd.read_pickle(model_path)
-        
+        try:
+            model = pd.read_pickle(model_path)
+            return model
+        except FileNotFoundError:
+            st.error(f"Error: Model file '{model_path}' not found.")
+        except Exception as e:
+            st.error(f"Error: Failed to load the model - {e}")
+            return None
+
+    # Load dataset
     df = load_data("HR_comma_sep.csv")
 
+    if df is None:
+        st.error("Failed to load the dataset. Please check the file path and try again.")
+        return
+
+    # Load model
     model = load_the_model("Employee Attrition Rate(Nisarg).pkl")
 
-    # Function To Valid Input Data
-    @st.cache_data
-    def is_valid_data(d):
-        letters = list("qwertyuiopasdfghjklzxcvbnm@!#$%^&*-+~")
-        return len(d) >= 2 and not any([i in letters for i in list(d)])
+    if model is None:
+        st.error("Failed to load the model. Please check the model file and try again.")
+        return
 
-    @st.cache_data
-    def validate_test_file(test_file_columns):
-        pa = """satisfaction_level
-last_evaluation
-average_montly_hours
-time_spend_company
-"""
-        col = "\n".join(test_file_columns).lower()
-        pattern = re.compile(pa)
-
-        matches = pattern.findall(col)
-        return len("\n".join(matches).split("\n")) == 9
-
+    # Custom CSS styling for Streamlit components
     st.markdown(
         """
-    <style>
-         .main {
+        <style>
+        .main {
             text-align: center; 
-         }
-         .st-emotion-cache-16txtl3 h1 {
-         font: bold 29px arial;
-         text-align: center;
-         margin-bottom: 15px
-            
-         }
-         div[data-testid=stSidebarContent] {
-         background-color: #111;
-         border-right: 4px solid #222;
-         padding: 8px!important
-         
-         }
-
-         div.block-containers{
-            padding-top: 0.5rem
-         }
-
-         .st-emotion-cache-z5fcl4{
+        }
+        .st-emotion-cache-16txtl3 h1 {
+            font: bold 29px arial;
+            text-align: center;
+            margin-bottom: 15px;    
+        }
+        div[data-testid=stSidebarContent] {
+            background-color: #111;
+            border-right: 4px solid #222;
+            padding: 8px!important;
+        }
+        div.block-containers {
+            padding-top: 0.5rem;
+        }
+        .st-emotion-cache-z5fcl4 {
             padding-top: 1rem;
             padding-bottom: 1rem;
             padding-left: 1.1rem;
             padding-right: 2.2rem;
             overflow-x: hidden;
-         }
-
-         .st-emotion-cache-16txtl3{
-            padding: 2.7rem 0.6rem
-         }
-
-         .plot-container.plotly{
+        }
+        .st-emotion-cache-16txtl3 {
+            padding: 2.7rem 0.6rem;
+        }
+        .plot-container.plotly {
             border: 1px solid #333;
             border-radius: 6px;
-         }
-
-         div.st-emotion-cache-1r6slb0 span.st-emotion-cache-10trblm{
-            font: bold 24px tahoma
-         }
-         div [data-testid=stImage]{
+        }
+        div.st-emotion-cache-1r6slb0 span.st-emotion-cache-10trblm {
+            font: bold 24px tahoma;
+        }
+        div[data-testid=stImage] {
             text-align: center;
             display: block;
             margin-left: auto;
             margin-right: auto;
             width: 100%;
         }
-
-        div[data-baseweb=select]>div{
+        div[data-baseweb=select]>div {
             cursor: pointer;
             background-color: #111;
-            border: 2px solid #17B794
+            border: 2px solid #17B794;
         }
-
-        div[data-baseweb=base-input]{
+        div[data-baseweb=base-input] {
             background-color: #111;
             border: 4px solid #444;
             border-radius: 5px;
-            padding: 5px
+            padding: 5px;
         }
-
-        div[data-testid=stFormSubmitButton]> button{
+        div[data-testid=stFormSubmitButton]> button {
             width: 40%;
             background-color: #111;
             border: 2px solid #17B794;
@@ -140,20 +125,17 @@ time_spend_company
             border-radius: 30px;
             opacity: 0.8;
         }
-        div[data-testid=stFormSubmitButton]  p{
+        div[data-testid=stFormSubmitButton] p {
             font-weight: bold;
-            font-size : 20px
+            font-size: 20px;
         }
-
-        div[data-testid=stFormSubmitButton]> button:hover{
+        div[data-testid=stFormSubmitButton]> button:hover {
             opacity: 1;
             border: 2px solid #17B794;
-            color: #fff
+            color: #fff;
         }
-
-
-    </style>
-    """,
+        </style>
+        """,
         unsafe_allow_html=True
     )
 
@@ -168,7 +150,6 @@ time_spend_company
         "container": {"padding": "3!important", "background-color": '#101010', "border": "2px solid #0000"},
         "nav-link": {"color": "white", "padding": "12px", "font-size": "18px", "text-align": "center", "margin": "0px", },
         "nav-link-selected": {"background-color": "#17B794"},
-
     }
 
     header = st.container()
@@ -180,10 +161,8 @@ time_spend_company
         st.image("imgs/division.png", caption="", width=90)
         page = option_menu(
             menu_title=None,
-            options=['Home', 'Vizualizations',
-                     'Prediction'],
-            icons=['diagram-3-fill', 'bar-chart-line-fill',
-                   "graph-up-arrow"],
+            options=['Home', 'Vizualizations', 'Prediction'],
+            icons=['diagram-3-fill', 'bar-chart-line-fill', "graph-up-arrow"],
             menu_icon="cast",
             default_index=0,
             styles=side_bar_options_style
@@ -200,20 +179,16 @@ time_spend_company
 
         # Home Page
         if page == "Home":
-
             with header:
                 st.header('Employee Retention Classification 👨‍💼')
 
             with content:
-                st.dataframe(df.sample(frac=0.25, random_state=35).reset_index(drop=True),
-                             use_container_width=True)
-
+                st.dataframe(df.sample(frac=0.25, random_state=35).reset_index(drop=True), use_container_width=True)
                 st.write("***")
 
                 st.subheader("Data Summary Overview")
 
-                len_numerical_data = df.select_dtypes(
-                    include="number").shape[1]
+                len_numerical_data = df.select_dtypes(include="number").shape[1]
                 len_string_data = df.select_dtypes(include="object").shape[1]
 
                 if len_numerical_data > 0:
@@ -225,8 +200,7 @@ time_spend_company
                 if len_string_data > 0:
                     st.subheader("String Data [𝓗]")
 
-                    data_stats = df.select_dtypes(
-                        include="object").describe().T
+                    data_stats = df.select_dtypes(include="object").describe().T
                     st.table(data_stats)
 
         # Vizualizations
@@ -236,19 +210,15 @@ time_spend_company
 
             with content:
                 # Numerical Columns
-                vizualizations.create_vizualization(
-                    df, viz_type="box", data_type="number")
+                vizualization.create_vizualization(df, viz_type="box", data_type="number")
 
                 # Categorical Columns
-                vizualizations.create_vizualization(
-                    df, viz_type="bar", data_type="object")
+                vizualization.create_vizualization(df, viz_type="bar", data_type="object")
 
                 # Less Than 4 Values
-                vizualizations.create_vizualization(
-                    df, viz_type="pie")
+                vizualization.create_vizualization(df, viz_type="pie")
 
-                st.plotly_chart(vizualizations.create_heat_map(df),
-                                use_container_width=True)
+                st.plotly_chart(vizualization.create_heat_map(df), use_container_width=True)
 
         # Prediction Model
         if page == "Prediction":
